@@ -6,7 +6,7 @@
 from odoo.addons.base_rest.controllers.main import _PseudoCollection
 from odoo.addons.base_rest.tests.common import TransactionRestServiceRegistryCase
 from odoo.addons.component.tests.common import new_rollbacked_env
-from odoo.addons.rest_log import exceptions as log_exceptions  # pylint: disable=W7950
+from odoo.addons.rest_log import exceptions as log_exceptions
 
 from .common import FakeConcurrentUpdateError, TestDBLoggingMixin
 
