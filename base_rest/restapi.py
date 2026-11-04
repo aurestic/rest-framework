@@ -412,7 +412,11 @@ class MultipartFormData(RestMethodParam):
                     )  # multipart ony sends its parts as string
                 except json.JSONDecodeError as error:
                     raise ValidationError(
-                        service.env._("%s's JSON content is malformed: %s", key, error)
+                        service.env._(
+                            "%(key)s's JSON content is malformed: %(error)s",
+                            key=key,
+                            error=error,
+                        )
                     ) from error
                 param = part.from_params(service, json_param)
             params[key] = param
