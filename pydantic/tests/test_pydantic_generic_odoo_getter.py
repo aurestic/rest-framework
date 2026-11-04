@@ -46,10 +46,14 @@ class CommonPydanticCase(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.user_demo = cls.env.ref("base.user_demo")
-        cls.user_demo.action_id = False
-        cls.user_demo.signature = False
-        cls.user_demo.share = False
+        # No depender de los datos demo (base.user_demo no existe sin demo)
+        cls.user_demo = cls.env["res.users"].create(
+            {
+                "name": "Pydantic Test User",
+                "login": "pydantic_test_user",
+                "group_ids": [(6, 0, [cls.env.ref("base.group_user").id])],
+            }
+        )
         cls.currency_eur = cls.env.ref("base.USD")
         cls.currency_rate = cls.env.ref("base.rateUSD")
 
