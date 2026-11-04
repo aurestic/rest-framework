@@ -11,13 +11,12 @@ from odoo import exceptions
 
 from odoo.addons.base_rest import restapi
 from odoo.addons.component.core import Component
-from odoo.addons.website.tools import MockRequest
+from odoo.addons.http_routing.tests.common import MockRequest
 
 
 class TestDBLoggingMixin:
     @staticmethod
     def _get_service(class_or_instance, collection=None):
-        # pylint: disable=R7980
         class LoggedService(Component):
             _inherit = "base.rest.service"
             _name = "test.log.service"

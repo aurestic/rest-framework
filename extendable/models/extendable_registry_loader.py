@@ -10,8 +10,8 @@ Load the extendable classes at the build of a registry.
 
 """
 
-import odoo
 from odoo import api, models
+from odoo.modules.module_graph import ModuleGraph
 
 from extendable.registry import ExtendableClassesRegistry
 
@@ -49,10 +49,10 @@ class ExtendableRegistryLoader(models.AbstractModel):
         # lookup all the installed (or about to be) addons and generate
         # the graph, so we can load the components following the order
         # of the addons' dependencies
-        graph = odoo.modules.graph.Graph()
-        graph.add_module(self.env.cr, "base")
+        graph = ModuleGraph(self.env.cr, mode="load")
+        graph.extend(["base"])
 
-        query = "SELECT name " "FROM ir_module_module " "WHERE state IN %s "
+        query = "SELECT name FROM ir_module_module WHERE state IN %s "
         params = [tuple(states)]
         if exclude_addons:
             query += " AND name NOT IN %s "
@@ -60,7 +60,7 @@ class ExtendableRegistryLoader(models.AbstractModel):
         self.env.cr.execute(query, params)
 
         module_list = [name for (name,) in self.env.cr.fetchall() if name not in graph]
-        graph.add_modules(self.env.cr, module_list)
+        graph.extend(module_list)
         module_matchings = []
         for m in graph:
             module_matchings.append(f"odoo.addons.{m.name}.*")
