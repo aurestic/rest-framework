@@ -55,7 +55,13 @@ class CommonPydanticCase(TransactionCase):
             }
         )
         cls.currency_eur = cls.env.ref("base.USD")
-        cls.currency_rate = cls.env.ref("base.rateUSD")
+        cls.currency_rate = cls.env["res.currency.rate"].create(
+            {
+                "currency_id": cls.currency_eur.id,
+                "name": "2000-01-01",
+                "rate": 1.5,
+            }
+        )
 
 
 class TestGenericOdooGetterPydanticV2Case(CommonPydanticCase):
