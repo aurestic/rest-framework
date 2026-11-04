@@ -54,6 +54,9 @@ class CommonPydanticCase(TransactionCase):
                 "group_ids": [(6, 0, [cls.env.ref("base.group_user").id])],
             }
         )
+        cls.user_demo.action_id = False
+        cls.user_demo.signature = False
+        cls.user_demo.share = False
         cls.currency_eur = cls.env.ref("base.USD")
         cls.currency_rate = cls.env["res.currency.rate"].create(
             {
