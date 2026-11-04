@@ -5,6 +5,7 @@ import json
 from odoo.exceptions import UserError
 
 from odoo.addons.base_rest import restapi
+from odoo.addons.base_rest.http import JSONEncoder
 
 from pydantic import BaseModel, ValidationError
 
@@ -52,7 +53,8 @@ class PydanticModel(restapi.RestMethodParam):
             json.loads(to_validate)
             to_validate_jsonified = to_validate
         except TypeError:
-            to_validate_jsonified = json.dumps(to_validate)
+            # JSONEncoder de base_rest: fechas, horas y decimales
+            to_validate_jsonified = json.dumps(to_validate, cls=JSONEncoder)
 
         try:
             self._model_cls.model_validate_json(to_validate_jsonified)

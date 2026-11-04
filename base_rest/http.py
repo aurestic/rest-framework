@@ -29,13 +29,12 @@ from odoo.exceptions import (
     ValidationError,
 )
 from odoo.http import (
-    CSRF_FREE_METHODS,
+    SAFE_HTTP_METHODS,
     MISSING_CSRF_WARNING,
     Dispatcher,
     SessionExpiredException,
     request,
 )
-from odoo.tools import ustr
 from odoo.tools.config import config
 
 _logger = logging.getLogger(__name__)
@@ -77,7 +76,9 @@ def wrapJsonException(exception, include_description=False, extra_info=None):
     def get_body(environ=None, scope=None):
         res = {"code": exception.code, "name": escape(exception.name)}
         description = exception.get_description(environ)
-        if config.get_misc("base_rest", "dev_mode"):
+        # Odoo 19: config ya no tiene get_misc/secciones; solo si existe
+        get_misc = getattr(config, "get_misc", None)
+        if get_misc and get_misc("base_rest", "dev_mode"):
             # return exception info only if base_rest is in dev_mode
             res.update({"traceback": exception.traceback, "description": description})
         elif include_description:
@@ -162,7 +163,7 @@ class RestApiDispatcher(Dispatcher):
 
         # Check for CSRF token for relevant requests
         if (
-            self.request.httprequest.method not in CSRF_FREE_METHODS
+            self.request.httprequest.method not in SAFE_HTTP_METHODS
             and endpoint.routing.get("csrf", True)
         ):
             token = params.pop("csrf_token", None)
@@ -228,13 +229,13 @@ class RestApiDispatcher(Dispatcher):
         if isinstance(exception, SessionExpiredException):
             # we don't want to return the login form as plain html page
             # we want to raise a proper exception
-            return wrapJsonException(Unauthorized(ustr(exception)))
+            return wrapJsonException(Unauthorized(str(exception)))
         if isinstance(exception, MissingError):
             extra_info = getattr(exception, "rest_json_info", None)
-            return wrapJsonException(NotFound(ustr(exception)), extra_info=extra_info)
+            return wrapJsonException(NotFound(str(exception)), extra_info=extra_info)
         if isinstance(exception, (AccessError | AccessDenied)):
             extra_info = getattr(exception, "rest_json_info", None)
-            return wrapJsonException(Forbidden(ustr(exception)), extra_info=extra_info)
+            return wrapJsonException(Forbidden(str(exception)), extra_info=extra_info)
         if isinstance(exception, (UserError | ValidationError)):
             extra_info = getattr(exception, "rest_json_info", None)
             return wrapJsonException(

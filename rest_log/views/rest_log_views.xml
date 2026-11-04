@@ -130,7 +130,7 @@
                     name="filter_severity_functional"
                     domain="[('severity', '=', 'functional')]"
                 />
-                <group expand="0" string="Group By">
+                <group>
                     <filter
                         string="Collection"
                         name="by_collection"

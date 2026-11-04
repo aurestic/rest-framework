@@ -4,7 +4,7 @@
 from unittest import mock
 
 from odoo.addons.component.core import Component
-from odoo.addons.website.tools import MockRequest
+from odoo.addons.http_routing.tests.common import MockRequest
 
 from .. import restapi
 from .common import BaseRestCase, TransactionRestServiceRegistryCase
@@ -198,4 +198,7 @@ class TestServiceContextProvider(TransactionRestServiceRegistryCase):
 class CommonCase(BaseRestCase):
     # dummy test method to pass codecov
     def test_04(self):
-        self.assertEqual(self.registry.test_cr, self.cr)
+        # Odoo 19: el registro ya no expone test_cr; comprobamos que el
+        # cursor que entrega el registro envuelve al del test.
+        with self.registry.cursor() as cr:
+            self.assertEqual(cr._cursor, self.cr)
