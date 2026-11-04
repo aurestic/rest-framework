@@ -29,8 +29,8 @@ from odoo.exceptions import (
     ValidationError,
 )
 from odoo.http import (
-    SAFE_HTTP_METHODS,
     MISSING_CSRF_WARNING,
+    SAFE_HTTP_METHODS,
     Dispatcher,
     SessionExpiredException,
     request,

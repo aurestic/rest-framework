@@ -10,9 +10,8 @@ Load the extendable classes at the build of a registry.
 
 """
 
-import odoo
-from odoo.modules.module_graph import ModuleGraph
 from odoo import api, models
+from odoo.modules.module_graph import ModuleGraph
 
 from extendable.registry import ExtendableClassesRegistry
 
@@ -53,7 +52,7 @@ class ExtendableRegistryLoader(models.AbstractModel):
         graph = ModuleGraph(self.env.cr, mode="load")
         graph.extend(["base"])
 
-        query = "SELECT name " "FROM ir_module_module " "WHERE state IN %s "
+        query = "SELECT name FROM ir_module_module WHERE state IN %s "
         params = [tuple(states)]
         if exclude_addons:
             query += " AND name NOT IN %s "
